@@ -12,7 +12,6 @@ class MoviesController < ApplicationController
 
   def index
     if params[:sort]
-
       case params[:sort]
       when "title"
         @title_sort = "hilite"
