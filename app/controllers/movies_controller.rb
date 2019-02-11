@@ -11,20 +11,33 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if params[:sort]
+    
+    @all_ratings = ["G", "PG", "PG-13", "R"]
+    
+    filter_rating = []
+    if params[:ratings]
+      i = 0
+      params[:ratings].each do |rate|
+        filter_rating[i] = rate
+        i += 1
+      end
+    else
+      filter_rating = @all_ratings
+    end
+    
+    
+    if params[:ratings] || params[:sort]
       case params[:sort]
-      
       when "title"
         @title_sort = "hilite"
-        @movies = Movie.order("title").all
       when "release_date"
         @release_date_sort = "hilite"
-        @movies = Movie.order("release_date").all
       end
+      
+      @movies = Movie.order(params[:sort]).where(rating: filter_rating)
     else
       @movies = Movie.all
     end
-
   end
 
   def new
