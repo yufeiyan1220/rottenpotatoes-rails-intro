@@ -11,7 +11,9 @@ class MoviesController < ApplicationController
   end
 
   def index
-    
+    if !params[:ratings] && !params[:sort]
+        session.clear
+    end
     @all_ratings = ["G", "PG", "PG-13", "R"]
     
     filter_rating = []
@@ -22,12 +24,15 @@ class MoviesController < ApplicationController
         filter_rating[i] = rate
         i += 1
       end
+      session[:rating] = filter_rating
     else
-      filter_rating = @all_ratings
+        filter_rating = @all_ratings
+        if(!session[:rating])
+            session[:rating] = filter_rating
+        end
     end
     
-    session[:rating] = filter_rating if params[:ratings]
-    session[:sort] = params[:sort] if session[:sort]
+    session[:sort] = params[:sort] if params[:sort]
     
     if session[:sort] || session[:rating]
       case session[:sort]
