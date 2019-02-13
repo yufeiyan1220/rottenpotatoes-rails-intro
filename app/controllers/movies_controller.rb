@@ -11,28 +11,24 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if !params[:ratings] && !params[:sort]
-        session.clear
-    end
     @all_ratings = ["G", "PG", "PG-13", "R"]
-    
     filter_rating = []
-    
     if params[:ratings]
-      i = 0
-      params[:ratings].each do |rate|
-        filter_rating[i] = rate
-        i += 1
-      end
+      filter_rating = params[:ratings] if params[:ratings].is_a? Array
+      filter_rating = params[:ratings].keys if params[:ratings].is_a? Hash
       session[:rating] = filter_rating
     else
-        filter_rating = @all_ratings
-        if(!session[:rating])
-            session[:rating] = filter_rating
-        end
+      if !params[:sort]
+        session[:rating] = @all_ratings
+      end
     end
-    
+   
     session[:sort] = params[:sort] if params[:sort]
+    @selected_ratings = session[:rating] || []
+    
+    if @selected_ratings == []
+      @selected_ratings = @all_ratings
+    end
     
     if session[:sort] || session[:rating]
       case session[:sort]
